@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.phoenix.citizen.R
 import com.phoenix.citizen.viewmodel.QuickReportViewModel
@@ -78,7 +79,7 @@ fun QuickReportScreen(
         ) {
             Button(
                 onClick = {
-                    if (locPerm.status.isGranted()) {
+                    if (locPerm.status.isGranted) {
                         vm.submitFlameAtCurrentLocation()
                     } else {
                         locPerm.launchPermissionRequest()
@@ -143,6 +144,3 @@ private fun SubmittedCard(lat: Double, lon: Double, online: Boolean, onDismiss: 
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
-private fun com.google.accompanist.permissions.PermissionStatus.isGranted(): Boolean =
-    this is com.google.accompanist.permissions.PermissionStatus.Granted

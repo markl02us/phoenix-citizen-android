@@ -40,6 +40,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.phoenix.citizen.R
 import com.phoenix.citizen.data.model.ObservationType
@@ -91,7 +92,7 @@ fun ReportFormScreen(
             Spacer(Modifier.height(4.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(onClick = {
-                    if (!camPerm.status.isGranted()) {
+                    if (!camPerm.status.isGranted) {
                         camPerm.launchPermissionRequest()
                         return@Button
                     }
@@ -224,6 +225,3 @@ private fun createCaptureUri(ctx: Context): Uri {
     return FileProvider.getUriForFile(ctx, "${ctx.packageName}.fileprovider", file)
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
-private fun com.google.accompanist.permissions.PermissionStatus.isGranted(): Boolean =
-    this is com.google.accompanist.permissions.PermissionStatus.Granted

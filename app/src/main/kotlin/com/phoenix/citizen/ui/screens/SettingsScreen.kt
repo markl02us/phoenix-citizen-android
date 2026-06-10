@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.phoenix.citizen.BuildConfig
 import com.phoenix.citizen.R
@@ -90,13 +91,13 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
 
         // Permissions
         SettingsSection(stringResource(R.string.settings_permissions)) {
-            PermissionRow(R.string.settings_perm_location, locPerm.status is com.google.accompanist.permissions.PermissionStatus.Granted) {
+            PermissionRow(R.string.settings_perm_location, locPerm.status.isGranted) {
                 locPerm.launchPermissionRequest()
             }
-            PermissionRow(R.string.settings_perm_camera, camPerm.status is com.google.accompanist.permissions.PermissionStatus.Granted) {
+            PermissionRow(R.string.settings_perm_camera, camPerm.status.isGranted) {
                 camPerm.launchPermissionRequest()
             }
-            PermissionRow(R.string.settings_perm_notifications, notPerm.status is com.google.accompanist.permissions.PermissionStatus.Granted) {
+            PermissionRow(R.string.settings_perm_notifications, notPerm.status.isGranted) {
                 notPerm.launchPermissionRequest()
             }
         }
