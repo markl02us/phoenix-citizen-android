@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="phoenix_red">#e03131</color>
+    <color name="ember_orange">#fd7e14</color>
+    <color name="signal_blue">#1971c2</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="firms_orange">#fd7e14</color>
+    <color name="eumetsat_yellow">#fab005</color>
+    <color name="press_green">#37b24d</color>
+    <color name="citizen_blue">#1971c2</color>
+    <color name="voted_purple">#7950f2</color>
+</resources>

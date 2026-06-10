@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <include domain="database" path="phoenix-citizen.db" />
+    <include domain="sharedpref" path="phoenix_prefs.xml" />
+    <exclude domain="file" path="captures/" />
+</full-backup-content>

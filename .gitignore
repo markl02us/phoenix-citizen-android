@@ -1,0 +1,28 @@
+*.iml
+.gradle
+/local.properties
+/.idea/*
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+*.apk
+*.aab
+*.aar
+*.jks
+*.keystore
+google-services.json
+release-keystore.properties
+
+# OS
+Thumbs.db
+
+# Gradle
+.gradle/
+**/build/
+!**/src/**/build/
+
+# Node, etc (none, but defensive)
+node_modules/

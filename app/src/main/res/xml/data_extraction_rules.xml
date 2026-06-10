@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="database" path="phoenix-citizen.db" />
+        <include domain="sharedpref" path="phoenix_prefs.xml" />
+        <exclude domain="file" path="captures/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="database" path="phoenix-citizen.db" />
+        <include domain="sharedpref" path="phoenix_prefs.xml" />
+    </device-transfer>
+</data-extraction-rules>

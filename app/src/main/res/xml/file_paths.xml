@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <cache-path name="captures" path="captures/" />
+    <files-path name="reports" path="reports/" />
+    <external-files-path name="external_captures" path="captures/" />
+</paths>

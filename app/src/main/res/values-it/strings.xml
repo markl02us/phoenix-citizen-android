@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PHOENIX Cittadino</string>
+
+    <!-- Bottom nav -->
+    <string name="nav_quick">Rapido</string>
+    <string name="nav_map">Mappa</string>
+    <string name="nav_history">Storico</string>
+    <string name="nav_settings">Impostazioni</string>
+
+    <!-- Quick Report Screen -->
+    <string name="quick_report_button">🔥 SEGNALA INCENDIO</string>
+    <string name="quick_report_hint">Tocca per segnalare immediatamente un incendio dalla tua posizione</string>
+    <string name="quick_report_more">Più dettagli</string>
+    <string name="quick_report_success">Segnalazione inviata</string>
+    <string name="quick_report_queued">Salvata offline — verrà inviata</string>
+    <string name="quick_report_error">Invio fallito. Salvata offline.</string>
+    <string name="acquiring_location">Acquisizione posizione…</string>
+    <string name="location_failed">Impossibile ottenere il GPS</string>
+
+    <!-- Report Form -->
+    <string name="report_form_title">Dettagli segnalazione</string>
+    <string name="report_form_photo">Foto</string>
+    <string name="report_form_capture">Scatta foto</string>
+    <string name="report_form_retake">Riscatta</string>
+    <string name="report_form_remove">Rimuovi</string>
+    <string name="report_form_observation">Cosa vedi?</string>
+    <string name="obs_flame">Fiamma 🔥</string>
+    <string name="obs_smoke">Fumo 🌫️</string>
+    <string name="obs_unsure">Non sicuro ❓</string>
+    <string name="report_form_wind">Direzione vento (da)</string>
+    <string name="wind_unknown">Sconosciuta</string>
+    <string name="wind_n">N</string>
+    <string name="wind_ne">NE</string>
+    <string name="wind_e">E</string>
+    <string name="wind_se">SE</string>
+    <string name="wind_s">S</string>
+    <string name="wind_sw">SO</string>
+    <string name="wind_w">O</string>
+    <string name="wind_nw">NO</string>
+    <string name="report_form_note">Nota (opzionale)</string>
+    <string name="report_form_lat">Latitudine</string>
+    <string name="report_form_lon">Longitudine</string>
+    <string name="report_form_submit">Invia segnalazione</string>
+
+    <!-- Map Screen -->
+    <string name="map_title">Rilevamenti attivi</string>
+    <string name="map_legend_phoenix">PHOENIX</string>
+    <string name="map_legend_firms">FIRMS</string>
+    <string name="map_legend_eumetsat">EUMETSAT</string>
+    <string name="map_legend_press">Stampa</string>
+    <string name="map_legend_citizen">Cittadino</string>
+    <string name="map_legend_voted">Confermato</string>
+    <string name="map_report_here">Segnala qui</string>
+    <string name="map_loading">Caricamento rilevamenti…</string>
+
+    <!-- History Screen -->
+    <string name="history_title">Le mie segnalazioni</string>
+    <string name="history_empty">Nessuna segnalazione. Tocca il pulsante rosso per inviarne una.</string>
+    <string name="history_synced">✅ Inviata</string>
+    <string name="history_queued">🕐 In coda</string>
+    <string name="history_failed">⚠️ Fallita</string>
+    <string name="history_retry">Riprova</string>
+    <string name="history_confirmed_by">🛰️ Confermata da %1$s</string>
+    <string name="history_awaiting">In attesa di conferma…</string>
+    <string name="pull_to_refresh">Trascina per aggiornare</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_language">Lingua</string>
+    <string name="settings_lang_system">Predefinita di sistema</string>
+    <string name="settings_lang_en">Inglese</string>
+    <string name="settings_lang_it">Italiano</string>
+    <string name="settings_device">Dispositivo</string>
+    <string name="settings_device_hash">ID dispositivo</string>
+    <string name="settings_reputation">Livello reputazione</string>
+    <string name="settings_notifications">Notifiche</string>
+    <string name="settings_push_toggle">Avvisi incendi vicini</string>
+    <string name="settings_permissions">Permessi</string>
+    <string name="settings_perm_location">Posizione</string>
+    <string name="settings_perm_camera">Fotocamera</string>
+    <string name="settings_perm_notifications">Notifiche</string>
+    <string name="settings_privacy">Privacy policy</string>
+    <string name="settings_about">Informazioni</string>
+    <string name="settings_version">Versione</string>
+    <string name="settings_how_it_works">Come funziona PHOENIX</string>
+    <string name="settings_diagnostic">Stato backend</string>
+    <string name="settings_diag_ok">Tutti i sistemi operativi</string>
+    <string name="settings_diag_degraded">Backend degradato</string>
+    <string name="settings_diag_check">Verifica ora</string>
+
+    <!-- Permissions -->
+    <string name="perm_location_rationale">PHOENIX ha bisogno della tua posizione per includere lat/lon esatti nelle segnalazioni.</string>
+    <string name="perm_camera_rationale">La fotocamera serve per allegare una foto dell\'incendio o del fumo.</string>
+    <string name="perm_notifications_rationale">Le notifiche ti avvisano di incendi vicini e conferme delle tue segnalazioni.</string>
+    <string name="perm_grant">Concedi</string>
+
+    <!-- Notifications channels -->
+    <string name="channel_nearby_fires">Incendi vicini</string>
+    <string name="channel_nearby_fires_desc">Avvisi prioritari quando vengono rilevati incendi vicino a te</string>
+    <string name="channel_confirmed">Mie segnalazioni confermate</string>
+    <string name="channel_confirmed_desc">Quando le tue segnalazioni vengono confermate da satellite o altre fonti</string>
+
+    <!-- Reputation tiers -->
+    <string name="rep_new">Nuovo</string>
+    <string name="rep_trusted">Affidabile</string>
+    <string name="rep_veteran">Veterano</string>
+    <string name="rep_authority">Autorità</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Annulla</string>
+    <string name="retry">Riprova</string>
+    <string name="close">Chiudi</string>
+    <string name="loading">Caricamento…</string>
+    <string name="error_network">Errore di rete</string>
+
+    <!-- About -->
+    <string name="about_credits">PHOENIX è un progetto di ricerca per il rilevamento incendi. Le segnalazioni cittadine aiutano a confermare i rilevamenti satellitari più rapidamente.</string>
+</resources>
