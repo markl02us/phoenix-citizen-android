@@ -104,13 +104,27 @@ fun SettingsScreen(vm: SettingsViewModel = viewModel()) {
 
         // Diagnostic
         SettingsSection(stringResource(R.string.settings_diagnostic)) {
+            val h = health
             Text(
                 when {
-                    health == null -> stringResource(R.string.loading)
-                    health?.status?.equals("ok", true) == true -> stringResource(R.string.settings_diag_ok)
+                    h == null -> stringResource(R.string.loading)
+                    h.warnings.isEmpty() -> stringResource(R.string.settings_diag_ok)
                     else -> stringResource(R.string.settings_diag_degraded)
                 }
             )
+            h?.let {
+                Text(
+                    "sources: ${it.count} · warnings: ${it.warnings.size}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                if (it.warnings.isNotEmpty()) {
+                    val preview = it.warnings.take(5).joinToString(", ") { w ->
+                        val sev = w.severity?.let { s -> " ($s)" } ?: ""
+                        "${w.source}$sev"
+                    }
+                    Text(preview, style = MaterialTheme.typography.labelSmall)
+                }
+            }
             TextButton(onClick = vm::pingHealth) { Text(stringResource(R.string.settings_diag_check)) }
         }
 

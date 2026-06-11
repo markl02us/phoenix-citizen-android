@@ -86,9 +86,9 @@ fun MapScreen(
         ) {
             state.detections.forEach { d ->
                 Marker(
-                    state = MarkerState(LatLng(d.lat, d.lon)),
-                    title = d.title ?: d.sourceClass,
-                    snippet = TimeUtils.formatLocal(d.tsUtc),
+                    state = MarkerState(LatLng(d.lat, d.lng)),
+                    title = d.source,
+                    snippet = d.timestamp?.let { TimeUtils.formatLocal(it) } ?: "",
                     icon = BitmapDescriptorFactory.defaultMarker(d.markerHue()),
                     onClick = {
                         sheetDetection = d
@@ -134,25 +134,43 @@ fun MapScreen(
         sheetDetection?.let { d ->
             ModalBottomSheet(onDismissRequest = { sheetDetection = null }) {
                 Column(Modifier.padding(16.dp)) {
-                    Text(d.title ?: d.sourceClass, style = MaterialTheme.typography.titleMedium)
+                    Text(d.source, style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.height(4.dp))
-                    Text("${d.sourceClass.uppercase()} · ${TimeUtils.formatLocal(d.tsUtc)}")
+                    val tsLabel = d.timestamp?.let { TimeUtils.formatLocal(it) } ?: "—"
+                    Text("${d.source.uppercase()} · $tsLabel")
                     d.frpMw?.let { Text("FRP: ${"%.1f".format(it)} MW") }
                     d.confidence?.let { Text("Confidence: ${"%.0f".format(it * 100)}%") }
+                    d.fireTempC?.let { Text("Fire temp: ${"%.0f".format(it)} °C") }
+                    d.uncertaintyRadiusKm?.let { Text("Uncertainty: ${"%.1f".format(it)} km") }
                     Spacer(Modifier.height(8.dp))
-                    Text("lat=${"%.5f".format(d.lat)}, lon=${"%.5f".format(d.lon)}")
+                    Text("lat=${"%.5f".format(d.lat)}, lng=${"%.5f".format(d.lng)}")
                 }
             }
         }
     }
 }
 
-private fun Detection.markerHue(): Float = when (sourceClass.lowercase()) {
-    "phoenix" -> BitmapDescriptorFactory.HUE_RED
-    "firms" -> BitmapDescriptorFactory.HUE_ORANGE
-    "eumetsat" -> BitmapDescriptorFactory.HUE_YELLOW
-    "press" -> BitmapDescriptorFactory.HUE_GREEN
-    "citizen" -> BitmapDescriptorFactory.HUE_BLUE
-    "voted" -> BitmapDescriptorFactory.HUE_VIOLET
+private fun Detection.markerHue(): Float = when (source.lowercase()) {
+    // PHOENIX-native detectors
+    "wind_diff", "fci_l1c", "subpixel_v1_alpha", "dozier_v1_alpha", "s2_swir", "adr" ->
+        BitmapDescriptorFactory.HUE_RED
+    // FIRMS family
+    "firms_viirs_noaa20", "firms_viirs_noaa21", "firms_viirs_snpp", "firms_modis_nrt" ->
+        BitmapDescriptorFactory.HUE_ORANGE
+    // EUMETSAT family
+    "mtg_af_l2", "slstr_frp_s3a", "slstr_frp_s3b", "metimage", "fci_rss", "mtg_irs" ->
+        BitmapDescriptorFactory.HUE_YELLOW
+    // News/press
+    "ansa_rss", "vigili_fuoco", "italian_news_rss" ->
+        BitmapDescriptorFactory.HUE_GREEN
+    // Social (teal)
+    "reddit", "mastodon" ->
+        BitmapDescriptorFactory.HUE_CYAN
+    // Citizen reports
+    "citizen_report" ->
+        BitmapDescriptorFactory.HUE_BLUE
+    // Voted/event-level
+    "voted", "voted_event" ->
+        BitmapDescriptorFactory.HUE_VIOLET
     else -> BitmapDescriptorFactory.HUE_ROSE
 }

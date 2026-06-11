@@ -81,10 +81,11 @@ class ReportRepository(
             val resp = api.submitReport(token, body)
             if (resp.isSuccessful) {
                 val responseBody = resp.body()
+                // Backend returns report_id as Long; Room column is String — convert at API boundary.
                 dao.update(
                     row.copy(
                         status = ReportEntity.STATUS_SYNCED,
-                        reportId = responseBody?.reportId,
+                        reportId = responseBody?.reportId?.toString(),
                         lastAttemptAt = System.currentTimeMillis(),
                         lastError = null
                     )
