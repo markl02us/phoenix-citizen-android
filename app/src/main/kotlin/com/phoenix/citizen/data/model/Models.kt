@@ -27,7 +27,37 @@ enum class WindDirection(val wire: String) {
 
 enum class ReputationTier { NEW, TRUSTED, VETERAN, AUTHORITY }
 
-/** Body for POST /api/citizen_report */
+/**
+ * Where the lat/lon on a report came from — stamped at capture so the
+ * location-quality split (split_citizen_truth.py) can classify precision at the
+ * SOURCE instead of guessing from a comune-centroid heuristic.
+ *
+ *  - GPS_QUICKREPORT — raw FusedLocation fix from the QuickReport big button
+ *  - GPS_FORM        — ReportForm seeded by GPS, fields NOT edited by the user
+ *  - MANUAL_EDITED   — user overtyped the lat/lon in the form
+ *  - PWA_PIN         — draggable pin on the web PWA (not produced by this app;
+ *                      defined here so the wire enum is complete + documented)
+ */
+enum class LocationSource(val wire: String) {
+    GPS_QUICKREPORT("gps_quickreport"),
+    GPS_FORM("gps_form"),
+    MANUAL_EDITED("manual_edited"),
+    PWA_PIN("pwa_pin");
+
+    companion object {
+        fun fromWire(s: String?): LocationSource? = entries.firstOrNull { it.wire == s }
+    }
+}
+
+/**
+ * Body for POST /api/citizen_report.
+ *
+ * `accuracyM` + `locationSource` are the two location-provenance fields added so
+ * the gps_precise-vs-village_attributed split is exact. Both are nullable and
+ * serialized only when present, so older clients / the existing ingest are
+ * unaffected. Wire names match what the edge Worker (writes.ts) persists into
+ * D1 citizen_reports.accuracy_m / .location_source.
+ */
 @Serializable
 data class CitizenReportPost(
     @SerialName("device_hash") val deviceHash: String,
@@ -37,7 +67,9 @@ data class CitizenReportPost(
     @SerialName("observation_type") val observationType: String,
     @SerialName("wind_direction_observed") val windDirection: String? = null,
     @SerialName("photo_path") val photoPath: String? = null,
-    @SerialName("note") val note: String? = null
+    @SerialName("note") val note: String? = null,
+    @SerialName("accuracy_m") val accuracyM: Float? = null,
+    @SerialName("location_source") val locationSource: String? = null
 )
 
 /** Server response after a successful POST. Backend returns report_id as an Int. */

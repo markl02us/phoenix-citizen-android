@@ -3,6 +3,7 @@ package com.phoenix.citizen.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.phoenix.citizen.data.model.LocationSource
 import com.phoenix.citizen.data.model.ObservationType
 import com.phoenix.citizen.data.repository.ReportRepository
 import com.phoenix.citizen.util.LocationProvider
@@ -39,18 +40,22 @@ class QuickReportViewModel(app: Application) : AndroidViewModel(app) {
     fun submitFlameAtCurrentLocation() {
         viewModelScope.launch {
             _state.value = QuickState.Acquiring
-            val pt = loc.currentOrNull()
-            if (pt == null) {
+            val fix = loc.currentFixOrNull()
+            if (fix == null) {
                 _state.value = QuickState.LocationFailed("no_gps")
                 return@launch
             }
-            val (lat, lon) = pt
+            val lat = fix.lat
+            val lon = fix.lon
             _state.value = QuickState.Submitting(lat, lon)
             val rowId = repo.submitOrQueue(
                 lat = lat,
                 lon = lon,
                 tsUtc = TimeUtils.nowUtcIso(),
-                observationType = ObservationType.FLAME.wire
+                observationType = ObservationType.FLAME.wire,
+                // Raw FusedLocation fix, never user-edited → the precise source.
+                accuracyM = fix.accuracyM,
+                locationSource = LocationSource.GPS_QUICKREPORT.wire
             )
             // After submitOrQueue, check whether the row is SYNCED or QUEUED to decide messaging.
             // We re-query the DB row indirectly through repo's flow in a follow-up screen;

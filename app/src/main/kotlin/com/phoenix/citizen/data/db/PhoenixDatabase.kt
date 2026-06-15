@@ -5,7 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [ReportEntity::class], version = 1, exportSchema = false)
+// v2 (2026-06-14): ReportEntity gains accuracyM + locationSource (location
+// provenance). fallbackToDestructiveMigration handles the local cache rebuild —
+// the app is pre-launch so there is no queued real report to preserve.
+@Database(entities = [ReportEntity::class], version = 2, exportSchema = false)
 abstract class PhoenixDatabase : RoomDatabase() {
     abstract fun reportDao(): ReportDao
 

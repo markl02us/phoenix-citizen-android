@@ -17,6 +17,10 @@ data class ReportEntity(
     val deviceHash: String,
     val lat: Double,
     val lon: Double,
+    /** Horizontal GPS accuracy radius in metres at capture; null if unknown. */
+    val accuracyM: Float? = null,
+    /** Provenance of lat/lon — see [com.phoenix.citizen.data.model.LocationSource]. */
+    val locationSource: String? = null,
     val tsUtc: String,
     val observationType: String,
     val windDirection: String? = null,

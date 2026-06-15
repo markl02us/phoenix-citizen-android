@@ -42,13 +42,17 @@ class ReportRepository(
         observationType: String,
         windDirection: String? = null,
         photoPath: String? = null,
-        note: String? = null
+        note: String? = null,
+        accuracyM: Float? = null,
+        locationSource: String? = null
     ): Long {
         val deviceHash = prefs.getOrCreateDeviceHash()
         val entity = ReportEntity(
             deviceHash = deviceHash,
             lat = lat,
             lon = lon,
+            accuracyM = accuracyM,
+            locationSource = locationSource,
             tsUtc = tsUtc,
             observationType = observationType,
             windDirection = windDirection,
@@ -76,7 +80,9 @@ class ReportRepository(
                 observationType = row.observationType,
                 windDirection = row.windDirection,
                 photoPath = row.photoPath,
-                note = row.note
+                note = row.note,
+                accuracyM = row.accuracyM,
+                locationSource = row.locationSource
             )
             val resp = api.submitReport(token, body)
             if (resp.isSuccessful) {
