@@ -1,7 +1,9 @@
 package com.phoenix.citizen.ui.screens
 
 import android.Manifest
+import android.graphics.Canvas
 import android.graphics.Color as AColor
+import android.graphics.Paint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +36,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -57,13 +58,12 @@ import com.phoenix.citizen.R
 import com.phoenix.citizen.data.model.WatchArea
 import com.phoenix.citizen.viewmodel.AreaAlertsViewModel
 import kotlinx.coroutines.launch
-import org.osmdroid.events.MapListener
-import org.osmdroid.events.ScrollEvent
-import org.osmdroid.events.ZoomEvent
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.osmdroid.views.overlay.Polygon
+import org.osmdroid.views.overlay.Overlay
+import kotlin.math.cos
+import kotlin.math.pow
 
 private const val SICILY_LAT = 37.5
 private const val SICILY_LON = 14.0
@@ -252,6 +252,61 @@ fun AreaAlertsScreen(vm: AreaAlertsViewModel = viewModel()) {
     }
 }
 
+/**
+ * Draws the area's two rings directly in screen space, centred on the map
+ * viewport (which is exactly where the centre crosshair sits). Radius in pixels
+ * is derived from the Web-Mercator ground resolution at the current centre
+ * latitude + (possibly fractional) zoom, so the circle is geographically
+ * accurate while never suffering the broken-fill / stray-line artifacts that
+ * osmdroid's geographic [org.osmdroid.views.overlay.Polygon] produces for large
+ * circles or circles whose centre is near the viewport edge.
+ */
+private class RingOverlay : Overlay() {
+    @Volatile var radiusMeters: Double = 10_000.0
+    @Volatile var approachMeters: Double = 0.0
+
+    private val innerFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = AColor.argb(40, 190, 30, 45)
+    }
+    private val innerStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 4f
+        color = AColor.rgb(190, 30, 45)
+    }
+    private val outerFill = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.FILL
+        color = AColor.argb(28, 255, 184, 28)
+    }
+    private val outerStroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+        strokeWidth = 3f
+        color = AColor.rgb(255, 184, 28)
+    }
+
+    override fun draw(canvas: Canvas, mapView: MapView, shadow: Boolean) {
+        if (shadow) return
+        val w = mapView.width
+        val h = mapView.height
+        if (w == 0 || h == 0) return
+        val cx = w / 2f
+        val cy = h / 2f
+        // Web-Mercator metres-per-pixel at the centre latitude and current zoom.
+        val lat = mapView.mapCenter.latitude
+        val mpp = 156543.03392804097 * cos(Math.toRadians(lat)) / 2.0.pow(mapView.zoomLevelDouble)
+        if (mpp <= 0.0 || mpp.isNaN()) return
+
+        if (approachMeters > 0.0) {
+            val ro = ((radiusMeters + approachMeters) / mpp).toFloat()
+            canvas.drawCircle(cx, cy, ro, outerFill)
+            canvas.drawCircle(cx, cy, ro, outerStroke)
+        }
+        val ri = (radiusMeters / mpp).toFloat()
+        canvas.drawCircle(cx, cy, ri, innerFill)
+        canvas.drawCircle(cx, cy, ri, innerStroke)
+    }
+}
+
 @Composable
 private fun NoticeCard(message: String, action: String, onAction: () -> Unit) {
     Card(
@@ -322,20 +377,13 @@ private fun AreaEditor(
 ) {
     val ctx = LocalContext.current
 
-    val innerRing = remember {
-        Polygon().apply {
-            fillPaint.color = AColor.argb(40, 190, 30, 45)
-            outlinePaint.color = AColor.rgb(190, 30, 45)
-            outlinePaint.strokeWidth = 4f
-        }
-    }
-    val outerRing = remember {
-        Polygon().apply {
-            fillPaint.color = AColor.argb(28, 255, 184, 28)
-            outlinePaint.color = AColor.rgb(255, 184, 28)
-            outlinePaint.strokeWidth = 3f
-        }
-    }
+    // The rings are drawn in SCREEN space (a plain canvas circle centred on the
+    // viewport) rather than as geographic polygons. osmdroid's Polygon fill +
+    // outline render with broken wedges / stray radial lines when the circle is
+    // large or its centre sits near the viewport edge during a pan/zoom; a
+    // screen-space circle is always glued to the centre crosshair and renders
+    // cleanly at every zoom level. See RingOverlay below.
+    val rings = remember { RingOverlay() }
 
     val mapView = remember {
         MapView(ctx).apply {
@@ -343,39 +391,25 @@ private fun AreaEditor(
             setMultiTouchControls(true)
             controller.setZoom(11.0)
             controller.setCenter(GeoPoint(initialLat, initialLon))
-            overlays.add(outerRing)
-            overlays.add(innerRing)
+            overlays.add(rings)
         }
     }
 
-    fun redraw() {
-        val c = mapView.mapCenter
-        val center = GeoPoint(c.latitude, c.longitude)
-        innerRing.points = Polygon.pointsAsCircle(center, radiusKm.toDouble() * 1000.0)
-        outerRing.points =
-            if (approachKm <= 0f) emptyList()
-            else Polygon.pointsAsCircle(center, (radiusKm + approachKm).toDouble() * 1000.0)
+    // Push the current slider values into the overlay and repaint. osmdroid
+    // repaints overlays automatically on pan/zoom, so the rings track the
+    // centre with no per-frame geometry recompute.
+    LaunchedEffect(radiusKm, approachKm) {
+        rings.radiusMeters = radiusKm.toDouble() * 1000.0
+        rings.approachMeters = if (approachKm <= 0f) 0.0 else approachKm.toDouble() * 1000.0
         mapView.invalidate()
     }
-
-    LaunchedEffect(radiusKm, approachKm) { redraw() }
     // When the user's location arrives (new area) or "Use my location" is tapped,
-    // glide the map onto it and redraw the rings around the new centre.
+    // glide the map onto it; the rings repaint automatically around the new centre.
     LaunchedEffect(recenterTo) {
         recenterTo?.let { (la, lo) ->
             mapView.controller.animateTo(GeoPoint(la, lo))
             mapView.controller.setZoom(12.0)
-            mapView.post { redraw() }
         }
-    }
-    DisposableEffect(mapView) {
-        val listener = object : MapListener {
-            override fun onScroll(event: ScrollEvent?): Boolean { redraw(); return false }
-            override fun onZoom(event: ZoomEvent?): Boolean { redraw(); return false }
-        }
-        mapView.addMapListener(listener)
-        mapView.post { redraw() }
-        onDispose { mapView.removeMapListener(listener) }
     }
 
     Card(Modifier.fillMaxWidth()) {
@@ -410,7 +444,6 @@ private fun AreaEditor(
                     onUseMyLocation { la, lo ->
                         mapView.controller.animateTo(GeoPoint(la, lo))
                         mapView.controller.setZoom(12.0)
-                        mapView.post { redraw() }
                     }
                 },
             ) {
