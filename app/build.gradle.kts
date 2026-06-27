@@ -28,8 +28,8 @@ android {
         applicationId = "com.phoenix.citizen"
         minSdk = 26
         targetSdk = 34
-        versionCode = 213
-        versionName = "2.1.2"
+        versionCode = 214
+        versionName = "2.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }

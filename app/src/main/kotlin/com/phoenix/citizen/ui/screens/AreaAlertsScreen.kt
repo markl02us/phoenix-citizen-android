@@ -71,6 +71,16 @@ import kotlin.math.pow
 private const val SICILY_LAT = 37.5
 private const val SICILY_LON = 14.0
 
+/**
+ * Format a kilometre value for display: whole numbers print without a decimal
+ * ("10"), half-kilometres keep one ("0.5", "2.5"). Always a dot (Double.toString),
+ * matching the web copy. Snaps to the nearest 0.5 to absorb slider float noise.
+ */
+private fun fmtKm(km: Double): String {
+    val r = Math.round(km * 2.0) / 2.0
+    return if (r == Math.floor(r)) r.toLong().toString() else r.toString()
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AreaAlertsScreen(vm: AreaAlertsViewModel = viewModel()) {
@@ -128,7 +138,7 @@ fun AreaAlertsScreen(vm: AreaAlertsViewModel = viewModel()) {
                     editingId = area.id
                     editingCreated = area.createdUtc
                     label = area.label
-                    radiusKm = area.radiusKm.toFloat().coerceIn(1f, 50f)
+                    radiusKm = area.radiusKm.toFloat().coerceIn(0.5f, 50f)
                     approachKm = area.approachKm.toFloat().coerceIn(0f, 25f)
                     pendingCenter = null
                     editing = true
@@ -227,7 +237,7 @@ fun AreaAlertsScreen(vm: AreaAlertsViewModel = viewModel()) {
                         label = label,
                         lat = lat,
                         lon = lon,
-                        radiusKm = radiusKm.toInt().toDouble(),
+                        radiusKm = Math.round(radiusKm * 2.0) / 2.0,
                         approachKm = approachKm.toInt().toDouble(),
                     )
                     editing = false
@@ -344,7 +354,7 @@ private fun AreaCard(
             }
             Divider(Modifier.padding(vertical = 6.dp))
             Text(
-                stringResource(R.string.alerts_ring_summary, area.radiusKm.toInt(), area.approachKm.toInt()),
+                stringResource(R.string.alerts_ring_summary, fmtKm(area.radiusKm), area.approachKm.toInt()),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
@@ -475,8 +485,9 @@ private fun AreaEditor(
                     }
                 }
 
-                Text(stringResource(R.string.alerts_radius_value, radiusKm.toInt()))
-                Slider(value = radiusKm, onValueChange = onRadius, valueRange = 1f..50f, steps = 48)
+                Text(stringResource(R.string.alerts_radius_value, fmtKm(radiusKm.toDouble())))
+                // 0.5 km floor with 0.5 km steps (0.5, 1, 1.5 … 50): 99 intervals.
+                Slider(value = radiusKm, onValueChange = onRadius, valueRange = 0.5f..50f, steps = 98)
 
                 Text(
                     if (approachKm <= 0f) stringResource(R.string.alerts_approach_off)

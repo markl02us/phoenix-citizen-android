@@ -117,14 +117,14 @@
     <string name="alerts_check_none">Nessuna area attiva da verificare.</string>
     <string name="alerts_inside">all\'interno</string>
     <string name="alerts_approaching">in avvicinamento</string>
-    <string name="alerts_ring_summary">Raggio %1$d km · margine di avvicinamento %2$d km</string>
+    <string name="alerts_ring_summary">Raggio %1$s km · margine di avvicinamento %2$d km</string>
     <string name="alerts_edit">Modifica</string>
     <string name="alerts_delete">Elimina</string>
     <string name="alerts_editor_title">Area</string>
     <string name="alerts_editor_hint">Sposta la mappa finché il segnalino centrale è sul luogo da sorvegliare, poi imposta i raggi.</string>
     <string name="alerts_label">Nome (es. Il mio terreno)</string>
     <string name="alerts_use_location">Usa la mia posizione</string>
-    <string name="alerts_radius_value">Raggio: %1$d km (incendio interno = nella tua area)</string>
+    <string name="alerts_radius_value">Raggio: %1$s km (incendio interno = nella tua area)</string>
     <string name="alerts_approach_value">Margine di avvicinamento: %1$d km (incendio qui = in avvicinamento)</string>
     <string name="alerts_approach_off">Margine di avvicinamento: disattivato (solo incendi dentro il raggio)</string>
     <string name="alerts_save">Salva area</string>

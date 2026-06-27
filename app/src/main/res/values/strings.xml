@@ -117,14 +117,14 @@
     <string name="alerts_check_none">No active areas to check.</string>
     <string name="alerts_inside">inside</string>
     <string name="alerts_approaching">approaching</string>
-    <string name="alerts_ring_summary">Range ring %1$d km · approach buffer %2$d km</string>
+    <string name="alerts_ring_summary">Range ring %1$s km · approach buffer %2$d km</string>
     <string name="alerts_edit">Edit</string>
     <string name="alerts_delete">Delete</string>
     <string name="alerts_editor_title">Area</string>
     <string name="alerts_editor_hint">Pan the map so the centre marker sits on the place to watch, then set the rings.</string>
     <string name="alerts_label">Name (e.g. My farm)</string>
     <string name="alerts_use_location">Use my location</string>
-    <string name="alerts_radius_value">Range ring: %1$d km (fire inside = in your area)</string>
+    <string name="alerts_radius_value">Range ring: %1$s km (fire inside = in your area)</string>
     <string name="alerts_approach_value">Approach buffer: %1$d km (fire here = approaching)</string>
     <string name="alerts_approach_off">Approach buffer: off (only fires inside the ring)</string>
     <string name="alerts_save">Save area</string>
