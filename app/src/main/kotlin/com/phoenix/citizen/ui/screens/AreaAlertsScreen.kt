@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -50,6 +51,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -389,7 +392,7 @@ private fun AreaEditor(
         MapView(ctx).apply {
             setTileSource(TileSourceFactory.MAPNIK)
             setMultiTouchControls(true)
-            controller.setZoom(11.0)
+            controller.setZoom(12.0)
             controller.setCenter(GeoPoint(initialLat, initialLon))
             overlays.add(rings)
         }
@@ -412,67 +415,88 @@ private fun AreaEditor(
         }
     }
 
-    Card(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            Text(stringResource(R.string.alerts_editor_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(R.string.alerts_editor_hint), style = MaterialTheme.typography.bodySmall)
-
-            OutlinedTextField(
-                value = label,
-                onValueChange = onLabel,
-                label = { Text(stringResource(R.string.alerts_label)) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Box(
+    // Full-screen dialog so the editor is NOT nested inside the screen's
+    // verticalScroll. Previously the map (a fixed-height MapView) sat inside the
+    // scrolling page, so panning the map fought the page scroll and the radius
+    // slider + Save button were trapped below the fold — users couldn't reliably
+    // set the area. Here the map takes all remaining space (weight(1f)) and the
+    // sliders + Cancel/Save stay pinned and always visible; nothing scrolls.
+    Dialog(
+        onDismissRequest = onCancel,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
+            Column(
                 Modifier
-                    .fillMaxWidth()
-                    .height(300.dp),
+                    .fillMaxSize()
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
-                Icon(
-                    Icons.Filled.Add,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.align(Alignment.Center),
+                Text(stringResource(R.string.alerts_editor_title), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(R.string.alerts_editor_hint), style = MaterialTheme.typography.bodySmall)
+
+                OutlinedTextField(
+                    value = label,
+                    onValueChange = onLabel,
+                    label = { Text(stringResource(R.string.alerts_label)) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
                 )
-            }
 
-            OutlinedButton(
-                onClick = {
-                    onUseMyLocation { la, lo ->
-                        mapView.controller.animateTo(GeoPoint(la, lo))
-                        mapView.controller.setZoom(12.0)
-                    }
-                },
-            ) {
-                Icon(Icons.Filled.MyLocation, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.alerts_use_location))
-            }
-
-            Text(stringResource(R.string.alerts_radius_value, radiusKm.toInt()))
-            Slider(value = radiusKm, onValueChange = onRadius, valueRange = 1f..50f, steps = 48)
-
-            Text(
-                if (approachKm <= 0f) stringResource(R.string.alerts_approach_off)
-                else stringResource(R.string.alerts_approach_value, approachKm.toInt()),
-            )
-            Slider(value = approachKm, onValueChange = onApproach, valueRange = 0f..25f, steps = 24)
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(onClick = onCancel, modifier = Modifier.weight(1f)) {
-                    Text(stringResource(R.string.cancel))
-                }
-                Button(
-                    onClick = {
-                        val c = mapView.mapCenter
-                        onSave(c.latitude, c.longitude)
-                    },
-                    modifier = Modifier.weight(1f),
+                // Map fills all remaining vertical space; the crosshair marks the
+                // centre (= the saved alert centre). "Use my location" floats over
+                // the map corner so it never steals height from the controls.
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 ) {
-                    Text(stringResource(R.string.alerts_save))
+                    AndroidView(factory = { mapView }, modifier = Modifier.fillMaxSize())
+                    Icon(
+                        Icons.Filled.Add,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.align(Alignment.Center),
+                    )
+                    Button(
+                        onClick = {
+                            onUseMyLocation { la, lo ->
+                                mapView.controller.animateTo(GeoPoint(la, lo))
+                                mapView.controller.setZoom(12.0)
+                            }
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp),
+                    ) {
+                        Icon(Icons.Filled.MyLocation, contentDescription = null)
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.alerts_use_location))
+                    }
+                }
+
+                Text(stringResource(R.string.alerts_radius_value, radiusKm.toInt()))
+                Slider(value = radiusKm, onValueChange = onRadius, valueRange = 1f..50f, steps = 48)
+
+                Text(
+                    if (approachKm <= 0f) stringResource(R.string.alerts_approach_off)
+                    else stringResource(R.string.alerts_approach_value, approachKm.toInt()),
+                )
+                Slider(value = approachKm, onValueChange = onApproach, valueRange = 0f..25f, steps = 24)
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    OutlinedButton(onClick = onCancel, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                    Button(
+                        onClick = {
+                            val c = mapView.mapCenter
+                            onSave(c.latitude, c.longitude)
+                        },
+                        modifier = Modifier.weight(1f),
+                    ) {
+                        Text(stringResource(R.string.alerts_save))
+                    }
                 }
             }
         }
