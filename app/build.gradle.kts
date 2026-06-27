@@ -28,8 +28,8 @@ android {
         applicationId = "com.phoenix.citizen"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 211
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
@@ -37,6 +37,29 @@ android {
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
 
         buildConfigField("String", "API_BASE_URL", "\"https://adr-wildfire.com/\"")
+    }
+
+    // Release signing — load from local keystore.properties (NOT committed).
+    // To set up: see C:/Users/markl/phoenix_citizen_android/docs/SIGNING.md
+    val keystorePropsFile = rootProject.file("keystore.properties")
+    val hasKeystore = keystorePropsFile.exists()
+    val keystoreProps = Properties().apply {
+        if (hasKeystore) load(FileInputStream(keystorePropsFile))
+    }
+
+    signingConfigs {
+        if (hasKeystore) {
+            create("release") {
+                storeFile = file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+                enableV1Signing = true
+                enableV2Signing = true
+                enableV3Signing = true
+                enableV4Signing = true
+            }
+        }
     }
 
     buildTypes {
@@ -47,6 +70,7 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "API_BASE_URL", "\"https://adr-wildfire.com/\"")
+            if (hasKeystore) signingConfig = signingConfigs.getByName("release")
         }
         debug {
             applicationIdSuffix = ".debug"
@@ -80,6 +104,12 @@ android {
     sourceSets {
         getByName("main") {
             java.srcDirs("src/main/kotlin")
+        }
+        getByName("test") {
+            java.srcDirs("src/test/kotlin")
+        }
+        getByName("androidTest") {
+            java.srcDirs("src/androidTest/kotlin")
         }
     }
 
@@ -134,9 +164,12 @@ dependencies {
     // Location
     implementation("com.google.android.gms:play-services-location:21.3.0")
 
-    // Maps Compose
+    // Maps Compose (Google) — kept so the dependency graph is stable; not used
+    // by ADRIZ which renders OpenStreetMap tiles via osmdroid (no API key needed).
     implementation("com.google.maps.android:maps-compose:4.4.1")
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+    // OpenStreetMap renderer — no API key required
+    implementation("org.osmdroid:osmdroid-android:6.1.18")
 
     // CameraX
     val cameraxVersion = "1.3.4"

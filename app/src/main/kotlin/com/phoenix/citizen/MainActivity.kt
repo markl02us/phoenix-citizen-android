@@ -1,13 +1,23 @@
 package com.phoenix.citizen
 
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import java.util.Locale
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.Icon
@@ -24,6 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.phoenix.citizen.ui.screens.AreaAlertsScreen
 import com.phoenix.citizen.ui.screens.HistoryScreen
 import com.phoenix.citizen.ui.screens.MapScreen
 import com.phoenix.citizen.ui.screens.QuickReportScreen
@@ -33,20 +44,48 @@ import com.phoenix.citizen.ui.theme.PhoenixTheme
 
 class MainActivity : ComponentActivity() {
 
+    override fun attachBaseContext(newBase: Context) {
+        // Force Italian for Sicily audience — applied at Activity level so
+        // Compose's stringResource() picks values-it/strings.xml.
+        val locale = Locale("it")
+        Locale.setDefault(locale)
+        val config = Configuration(newBase.resources.configuration)
+        config.setLocale(locale)
+        super.attachBaseContext(newBase.createConfigurationContext(config))
+    }
+
+    private var pendingRoute by mutableStateOf<String?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        pendingRoute = intent?.getStringExtra(EXTRA_OPEN_ROUTE)
         setContent {
             PhoenixTheme {
-                PhoenixAppScaffold()
+                PhoenixAppScaffold(
+                    requestedRoute = pendingRoute,
+                    onRouteConsumed = { pendingRoute = null },
+                )
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        pendingRoute = intent.getStringExtra(EXTRA_OPEN_ROUTE)
+    }
+
+    companion object {
+        const val EXTRA_OPEN_ROUTE = "open_route"
+        const val ROUTE_MAP = "map"
     }
 }
 
 sealed class NavRoute(val route: String) {
     data object Quick : NavRoute("quick")
     data object Map : NavRoute("map")
+    data object Alerts : NavRoute("alerts")
     data object History : NavRoute("history")
     data object Settings : NavRoute("settings")
     data object Form : NavRoute("form?lat={lat}&lon={lon}") {
@@ -69,13 +108,30 @@ private data class BottomTab(
 private val bottomTabs = listOf(
     BottomTab(NavRoute.Quick.route, R.string.nav_quick, Icons.Filled.Whatshot),
     BottomTab(NavRoute.Map.route, R.string.nav_map, Icons.Filled.Map),
+    BottomTab(NavRoute.Alerts.route, R.string.nav_alerts, Icons.Filled.NotificationsActive),
     BottomTab(NavRoute.History.route, R.string.nav_history, Icons.Filled.History),
     BottomTab(NavRoute.Settings.route, R.string.nav_settings, Icons.Filled.Settings),
 )
 
 @Composable
-fun PhoenixAppScaffold() {
+fun PhoenixAppScaffold(
+    requestedRoute: String? = null,
+    onRouteConsumed: () -> Unit = {},
+) {
     val navController = rememberNavController()
+
+    // Honor a route requested by a notification tap (e.g. open the map on a fire alert).
+    LaunchedEffect(requestedRoute) {
+        if (requestedRoute != null) {
+            navController.navigate(requestedRoute) {
+                popUpTo(navController.graph.startDestinationId) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+            onRouteConsumed()
+        }
+    }
+
     Scaffold(
         bottomBar = {
             val backStack by navController.currentBackStackEntryAsState()
@@ -115,6 +171,7 @@ fun PhoenixAppScaffold() {
                     }
                 )
             }
+            composable(NavRoute.Alerts.route) { AreaAlertsScreen() }
             composable(NavRoute.History.route) { HistoryScreen() }
             composable(NavRoute.Settings.route) { SettingsScreen() }
             composable(NavRoute.Form.route) { backStack ->

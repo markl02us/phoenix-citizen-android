@@ -32,7 +32,7 @@ class DevicePrefs(private val context: Context) {
     }
 
     val languageFlow: Flow<String> = context.phoenixDataStore.data.map { prefs ->
-        prefs[Keys.LANGUAGE] ?: "system"
+        prefs[Keys.LANGUAGE] ?: "it"
     }
 
     val pushEnabledFlow: Flow<Boolean> = context.phoenixDataStore.data.map { prefs ->

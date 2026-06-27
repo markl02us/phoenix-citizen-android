@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PHOENIX Cittadino</string>
+    <string name="app_name">ADRIZ</string>
 
     <!-- Bottom nav -->
     <string name="nav_quick">Rapido</string>
     <string name="nav_map">Mappa</string>
+    <string name="nav_alerts">Avvisi</string>
     <string name="nav_history">Storico</string>
     <string name="nav_settings">Impostazioni</string>
 
@@ -45,7 +46,9 @@
 
     <!-- Map Screen -->
     <string name="map_title">Rilevamenti attivi</string>
-    <string name="map_legend_phoenix">PHOENIX</string>
+    <string name="map_legend_phoenix">ADRIZ</string>
+    <string name="citizen_marker_title">Incendio segnalato da cittadino</string>
+    <string name="citizen_marker_subtitle">Qualcuno sul posto ha visto un incendio. Trattare come priorità alta.</string>
     <string name="map_legend_firms">FIRMS</string>
     <string name="map_legend_eumetsat">EUMETSAT</string>
     <string name="map_legend_press">Stampa</string>
@@ -75,7 +78,7 @@
     <string name="settings_device_hash">ID dispositivo</string>
     <string name="settings_reputation">Livello reputazione</string>
     <string name="settings_notifications">Notifiche</string>
-    <string name="settings_push_toggle">Avvisi incendi vicini</string>
+    <string name="settings_push_toggle">Notifiche avvisi incendi</string>
     <string name="settings_permissions">Permessi</string>
     <string name="settings_perm_location">Posizione</string>
     <string name="settings_perm_camera">Fotocamera</string>
@@ -100,6 +103,36 @@
     <string name="channel_nearby_fires_desc">Avvisi prioritari quando vengono rilevati incendi vicino a te</string>
     <string name="channel_confirmed">Mie segnalazioni confermate</string>
     <string name="channel_confirmed_desc">Quando le tue segnalazioni vengono confermate da satellite o altre fonti</string>
+    <string name="channel_area">Avvisi per le mie aree</string>
+    <string name="channel_area_desc">Avvisi quando un incendio è dentro, o si avvicina, a un\'area che segui</string>
+
+    <!-- Area Alerts Screen -->
+    <string name="alerts_title">Avvisi per le mie aree</string>
+    <string name="alerts_intro">Disegna un raggio attorno a un luogo importante — il tuo terreno, gli animali o la tua proprietà. Verrai avvisato se un incendio viene rilevato al suo interno, o se si avvicina, anche quando non sei lì.</string>
+    <string name="alerts_need_notif">Le notifiche sono disattivate. Attivale per ricevere gli avvisi delle aree.</string>
+    <string name="alerts_empty">Nessuna area. Aggiungine una per iniziare a sorvegliare un luogo.</string>
+    <string name="alerts_add">Aggiungi un\'area</string>
+    <string name="alerts_check_now">Verifica ora</string>
+    <string name="alerts_checking">Verifica in corso…</string>
+    <string name="alerts_check_none">Nessuna area attiva da verificare.</string>
+    <string name="alerts_inside">all\'interno</string>
+    <string name="alerts_approaching">in avvicinamento</string>
+    <string name="alerts_ring_summary">Raggio %1$d km · margine di avvicinamento %2$d km</string>
+    <string name="alerts_edit">Modifica</string>
+    <string name="alerts_delete">Elimina</string>
+    <string name="alerts_editor_title">Area</string>
+    <string name="alerts_editor_hint">Sposta la mappa finché il segnalino centrale è sul luogo da sorvegliare, poi imposta i raggi.</string>
+    <string name="alerts_label">Nome (es. Il mio terreno)</string>
+    <string name="alerts_use_location">Usa la mia posizione</string>
+    <string name="alerts_radius_value">Raggio: %1$d km (incendio interno = nella tua area)</string>
+    <string name="alerts_approach_value">Margine di avvicinamento: %1$d km (incendio qui = in avvicinamento)</string>
+    <string name="alerts_approach_off">Margine di avvicinamento: disattivato (solo incendi dentro il raggio)</string>
+    <string name="alerts_save">Salva area</string>
+    <string name="alerts_paused">Avvisi in pausa. Riattivali per essere avvisato sulle tue aree.</string>
+    <string name="alerts_resume">Riattiva avvisi</string>
+    <string name="alerts_check_clear">tutto tranquillo, nessun incendio</string>
+    <string name="alerts_delete_title">Eliminare quest\'area?</string>
+    <string name="alerts_delete_confirm">Smettere di sorvegliare «%1$s»? Potrai sempre aggiungerla di nuovo.</string>
 
     <!-- Reputation tiers -->
     <string name="rep_new">Nuovo</string>

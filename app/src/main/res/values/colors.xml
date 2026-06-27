@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="phoenix_red">#e03131</color>
-    <color name="ember_orange">#fd7e14</color>
+    <!-- Sicilian flag palette -->
+    <color name="sicilian_red">#BE1E2D</color>
+    <color name="sicilian_gold">#FFB81C</color>
+    <color name="sicilian_black">#1A1A1A</color>
+    <color name="sicilian_deep_red">#8B0000</color>
+    <!-- Legacy aliases (kept so existing refs still resolve, repointed to Sicilian palette) -->
+    <color name="phoenix_red">#BE1E2D</color>
+    <color name="ember_orange">#FFB81C</color>
     <color name="signal_blue">#1971c2</color>
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>

@@ -30,12 +30,14 @@ object NetworkModule {
         }.build()
     }
 
-    val api: PhoenixApi by lazy {
+    private val retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BuildConfig.API_BASE_URL)
             .client(okHttp)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
-            .create(PhoenixApi::class.java)
     }
+
+    val api: PhoenixApi by lazy { retrofit.create(PhoenixApi::class.java) }
+    val apiV2: PhoenixApiV2 by lazy { retrofit.create(PhoenixApiV2::class.java) }
 }

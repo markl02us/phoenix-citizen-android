@@ -26,3 +26,4 @@ Thumbs.db
 
 # Node, etc (none, but defensive)
 node_modules/
+keystore.properties

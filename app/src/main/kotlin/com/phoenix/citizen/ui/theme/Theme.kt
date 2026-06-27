@@ -11,37 +11,49 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-val PhoenixRed = Color(0xFFE03131)
-val EmberOrange = Color(0xFFFD7E14)
+// Sicilian flag palette — Palermo red + Corleone gold + Trinacria black
+val SicilianRed = Color(0xFFBE1E2D)
+val SicilianGold = Color(0xFFFFB81C)
+val SicilianDeepRed = Color(0xFF8B0000)
+val TrinacriaBlack = Color(0xFF1A1A1A)
+val WarmCream = Color(0xFFFFF8E7)
+
+// Legacy aliases (kept so older code that imports PhoenixRed still compiles)
+val PhoenixRed = SicilianRed
+val EmberOrange = SicilianGold
 val SignalBlue = Color(0xFF1971C2)
-val DeepRed = Color(0xFFB02525)
+val DeepRed = SicilianDeepRed
 
 private val LightColors = lightColorScheme(
-    primary = PhoenixRed,
+    primary = SicilianRed,
     onPrimary = Color.White,
     primaryContainer = Color(0xFFFFDAD6),
     onPrimaryContainer = Color(0xFF410002),
-    secondary = EmberOrange,
-    onSecondary = Color.White,
-    tertiary = SignalBlue,
-    onTertiary = Color.White,
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    error = DeepRed
+    secondary = SicilianGold,
+    onSecondary = TrinacriaBlack,
+    secondaryContainer = Color(0xFFFFE9A8),
+    onSecondaryContainer = Color(0xFF2B1F00),
+    tertiary = TrinacriaBlack,
+    onTertiary = SicilianGold,
+    background = WarmCream,
+    surface = Color(0xFFFFFCF2),
+    onBackground = TrinacriaBlack,
+    onSurface = TrinacriaBlack,
+    error = SicilianDeepRed
 )
 
 private val DarkColors = darkColorScheme(
-    primary = PhoenixRed,
+    primary = SicilianRed,
     onPrimary = Color.White,
-    primaryContainer = Color(0xFF820008),
+    primaryContainer = Color(0xFF600008),
     onPrimaryContainer = Color(0xFFFFDAD6),
-    secondary = EmberOrange,
-    onSecondary = Color.Black,
-    tertiary = SignalBlue,
-    onTertiary = Color.White,
-    background = Color(0xFF121212),
-    surface = Color(0xFF1E1E1E),
-    error = DeepRed
+    secondary = SicilianGold,
+    onSecondary = TrinacriaBlack,
+    tertiary = SicilianGold,
+    onTertiary = TrinacriaBlack,
+    background = Color(0xFF120808),
+    surface = Color(0xFF1F1414),
+    error = SicilianDeepRed
 )
 
 @Composable

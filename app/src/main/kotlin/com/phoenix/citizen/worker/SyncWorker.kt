@@ -3,6 +3,7 @@ package com.phoenix.citizen.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.phoenix.citizen.alerts.AreaAlertChecker
 import com.phoenix.citizen.data.repository.ReportRepository
 
 /**
@@ -23,6 +24,9 @@ class SyncWorker(
         return try {
             repo.drainQueue()
             repo.refreshCorroboration()
+            // Area alerts run after the report sync. Wrapped independently so a
+            // failure here never blocks (or is blocked by) the report queue.
+            runCatching { AreaAlertChecker(applicationContext).runCheck() }
             Result.success()
         } catch (t: Throwable) {
             if (runAttemptCount < 3) Result.retry() else Result.failure()

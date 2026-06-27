@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PHOENIX Citizen</string>
+    <string name="app_name">ADRIZ</string>
 
     <!-- Bottom nav -->
     <string name="nav_quick">Quick</string>
     <string name="nav_map">Map</string>
+    <string name="nav_alerts">Alerts</string>
     <string name="nav_history">History</string>
     <string name="nav_settings">Settings</string>
 
@@ -45,7 +46,9 @@
 
     <!-- Map Screen -->
     <string name="map_title">Active detections</string>
-    <string name="map_legend_phoenix">PHOENIX</string>
+    <string name="map_legend_phoenix">ADRIZ</string>
+    <string name="citizen_marker_title">Citizen-reported fire</string>
+    <string name="citizen_marker_subtitle">Someone on the ground saw a fire here. Treat as high priority.</string>
     <string name="map_legend_firms">FIRMS</string>
     <string name="map_legend_eumetsat">EUMETSAT</string>
     <string name="map_legend_press">Press</string>
@@ -75,7 +78,7 @@
     <string name="settings_device_hash">Device ID</string>
     <string name="settings_reputation">Reputation tier</string>
     <string name="settings_notifications">Notifications</string>
-    <string name="settings_push_toggle">Nearby-fire push alerts</string>
+    <string name="settings_push_toggle">Fire alert notifications</string>
     <string name="settings_permissions">Permissions</string>
     <string name="settings_perm_location">Location</string>
     <string name="settings_perm_camera">Camera</string>
@@ -100,6 +103,36 @@
     <string name="channel_nearby_fires_desc">High-priority alerts when fires are detected near you</string>
     <string name="channel_confirmed">My Reports Confirmed</string>
     <string name="channel_confirmed_desc">When your submitted reports are corroborated by satellite or other sources</string>
+    <string name="channel_area">My Area Alerts</string>
+    <string name="channel_area_desc">Alerts when a fire is inside, or approaching, an area you watch</string>
+
+    <!-- Area Alerts Screen -->
+    <string name="alerts_title">My area alerts</string>
+    <string name="alerts_intro">Draw a range ring around a place that matters — your farm, animals or property. You\'ll be notified if a fire is detected inside it, or approaching it, even when you\'re not there.</string>
+    <string name="alerts_need_notif">Notifications are off. Turn them on so area alerts can reach you.</string>
+    <string name="alerts_empty">No areas yet. Add one to start watching a place.</string>
+    <string name="alerts_add">Add an area</string>
+    <string name="alerts_check_now">Check now</string>
+    <string name="alerts_checking">Checking…</string>
+    <string name="alerts_check_none">No active areas to check.</string>
+    <string name="alerts_inside">inside</string>
+    <string name="alerts_approaching">approaching</string>
+    <string name="alerts_ring_summary">Range ring %1$d km · approach buffer %2$d km</string>
+    <string name="alerts_edit">Edit</string>
+    <string name="alerts_delete">Delete</string>
+    <string name="alerts_editor_title">Area</string>
+    <string name="alerts_editor_hint">Pan the map so the centre marker sits on the place to watch, then set the rings.</string>
+    <string name="alerts_label">Name (e.g. My farm)</string>
+    <string name="alerts_use_location">Use my location</string>
+    <string name="alerts_radius_value">Range ring: %1$d km (fire inside = in your area)</string>
+    <string name="alerts_approach_value">Approach buffer: %1$d km (fire here = approaching)</string>
+    <string name="alerts_approach_off">Approach buffer: off (only fires inside the ring)</string>
+    <string name="alerts_save">Save area</string>
+    <string name="alerts_paused">Alerts are paused. Resume to be notified about your areas.</string>
+    <string name="alerts_resume">Resume alerts</string>
+    <string name="alerts_check_clear">all clear, no fires</string>
+    <string name="alerts_delete_title">Delete this area?</string>
+    <string name="alerts_delete_confirm">Stop watching “%1$s”? You can always add it again later.</string>
 
     <!-- Reputation tiers -->
     <string name="rep_new">New</string>
